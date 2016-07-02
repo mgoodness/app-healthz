@@ -1,0 +1,6 @@
+package: github.com/mgoodness/app-healthz
+import:
+- package: github.com/go-sql-driver/mysql
+- package: github.com/prometheus/client_golang
+  subpackages:
+  - prometheus

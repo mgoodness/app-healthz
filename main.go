@@ -5,11 +5,14 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
-	"github.com/kelseyhightower/app-healthz/healthz"
+	"github.com/mgoodness/app-healthz/healthz"
+	"github.com/mgoodness/app-healthz/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
-var version = "1.0.0"
+var version = "1.1.0"
 
 func main() {
 	log.Println("Starting app...")
@@ -42,9 +45,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	metrics.Register()
+
+	http.Handle("/metrics", prometheus.UninstrumentedHandler())
 	http.Handle("/healthz", healthzHandler)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, html, hostname, version)
+		metrics.HTTPRequestsTotal.WithLabelValues(
+			strconv.Itoa(http.StatusOK), "/", r.Method).Inc()
 	})
 
 	log.Printf("HTTP service listening on %s", httpAddr)

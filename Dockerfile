@@ -1,4 +1,4 @@
 FROM scratch
-MAINTAINER Kelsey Hightower <kelsey.hightower@gmail.com>
+MAINTAINER Michael Goodness <mgoodness@gmail.com>
 ADD app-healthz /app-healthz
 ENTRYPOINT ["/app-healthz"]

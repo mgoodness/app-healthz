@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/mgoodness/app-healthz/metrics"
 )
 
 type Config struct {
@@ -89,4 +91,6 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	w.Write(data)
+	metrics.HTTPRequestsTotal.WithLabelValues(
+		strconv.Itoa(statusCode), "healthz", r.Method).Inc()
 }
